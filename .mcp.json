@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "chore-list": {
+      "command": "node",
+      "args": ["agents/dobby/tools/chore-list.mjs"]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "chores": [
+    {
+      "task": "Collect Master Dave's socks",
+      "done": false
+    },
+    {
+      "task": "buy more socks",
+      "done": false
+    },
+    {
+      "task": "Darn Tough socks (terminator's top-rated pick — Vermont-made, lifetime guarantee, merino wool)",
+      "done": false
+    }
+  ]
+}
