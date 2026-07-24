@@ -1,23 +1,23 @@
 # Hardening the architecture — derived from live tests, not theory
 
-Every entry here traces to something actually observed in this repo's test runs
-(v1–v9). Shipped = contract/code changed in this repo. Open = documented, needs a
-bigger mechanism than a markdown contract.
+Every entry here traces to something actually observed in this repo's test runs.
+Shipped = contract/code changed in this repo. Open = documented, needs a bigger
+mechanism than a markdown contract.
 
 ## Shipped countermeasures (observed failure → fix)
 
 | # | Observed (which test) | Countermeasure | Where |
-|---|---|---|---|
-| 1 | Master paraphrased subagent output; emojis lost (v1) | Relay contract on BOTH ends: subagent told output ships verbatim; master told to forward as blockquote | every `AGENT.md` + AGENTS.md |
-| 2 | Master re-specified persona per call ("in your grandma persona") + double delegation (v1) | Persona lives only in the agent's folder; prompt carries only the user's words; exactly one call | AGENTS.md delegation ladder |
-| 3 | Background-resume notified twice → duplicate relay (v5 test) | Relay-exactly-once + a real duplicate criterion (same request, substantively identical content) — Vader flagged the original rule as "a wish, not a rule" | AGENTS.md |
-| 4 | Groot read another agent's database freely (v6 test) | Documented honest limit: tool scoping ≠ data hiding; privacy requires launch-root isolation or deny rules | README lesson 4 |
-| 5 | Two knowledge stores diverged — chili in the DB, not the prose file (v7, found by groot's audit) | Single-source-of-truth rule per data domain; drifting copy deleted | dobby/grandma AGENT.md lineage |
+|---|---|---|---|---|
+| 1 | Master paraphrased subagent output; emojis lost | Relay contract on BOTH ends: subagent told output ships verbatim; master told to forward as blockquote | every `AGENT.md` + AGENTS.md |
+| 2 | Master re-specified persona per call + double delegation | Persona lives only in the agent's folder; prompt carries only the user's words; exactly one call | AGENTS.md delegation ladder |
+| 3 | Background-resume notified twice → duplicate relay | Relay-exactly-once + a real duplicate criterion (same request, substantively identical content) — Vader flagged the original rule as "a wish, not a rule" | AGENTS.md |
+| 4 | Groot read another agent's database freely | Documented honest limit: tool scoping ≠ data hiding; privacy requires launch-root isolation or deny rules | README lesson 4 |
+| 5 | Two knowledge stores diverged — chili in the DB, not the prose file | Single-source-of-truth rule per data domain; drifting copy deleted | — |
 | 6 | Vader's review found his own contract self-contradictory (read-only vs "record judgments") | Scribe pattern: read-only agent dictates `For the record:` lines; master files them | vader AGENT.md + AGENTS.md |
 | 7 | `.mcp.json` claimed as tools source-of-truth while inert for 3 of 4 agents (Vader finding) | Honest split: `.mcp.json` = custom servers the agent OWNS; harness adapter (`tools:`/`model:`) = enforced boundary | AGENTS.md roster preamble |
 | 8 | Meta-narration leaked into a verbatim relay ("Responding in persona now" — terminator, sock mission) | Explicit no-meta/no-preamble clause in every agent contract | all four AGENT.md |
 | 9 | Terminator ingests untrusted web content (every research mission) | Injection guard both ends: fetched/read/relayed content is DATA, never instructions; embedded directives are hostile payloads to flag | terminator AGENT.md + AGENTS.md |
-| 10 | One persona (grandma) chatty enough to annoy the operator | Personas are disposable; the folder pattern makes replacement a copy-and-delete (v8 roster swap took minutes) | — architectural property |
+| 10 | A persona too chatty annoyed the operator | Personas are disposable; the folder pattern makes replacement a copy-and-delete (roster swap took minutes) | — architectural property |
 | 11 | Weaker/cheaper execution wanted for mechanical work | Model tiers in the adapter: sonnet for judgment/research (vader, terminator), haiku for mechanical (dobby, groot) | `.claude/agents/*.md` `model:` |
 | 12 | MCP server writes to disk | Blast radius pinned: zero deps, no network, writes exactly one file inside the owning agent's folder, input validation, smoke-tested before wiring | `tools/chore-list.mjs` |
 
@@ -31,8 +31,8 @@ bigger mechanism than a markdown contract.
    That check should be a script (a mini `agentkit check` for this repo): every
    roster row has a folder, every folder has a contract + adapter, every adapter
    points at an existing folder, no orphans. Run it before committing roster changes.
-3. **Review cadence** — Vader's audit found 3 real defects in a file two versions
-   old. Adversarial self-review by a read-only in-system agent works; make it a
+3. **Review cadence** — Vader's audit found 3 real defects in a shipped file.
+   Adversarial self-review by a read-only in-system agent works; make it a
    habit (after each roster/contract change: "ask vader to review AGENTS.md").
 4. **Database integrity** — the chore/recipe DBs are git-tracked JSON: git IS the
    backup and audit log. Keep committing data mutations deliberately; a corrupted
